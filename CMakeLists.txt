@@ -28,7 +28,6 @@ add_definitions("-funsigned-bitfields")
 add_definitions("-ffunction-sections")
 add_definitions("-c")
 add_definitions("-std=gnu99")
-add_definitions("-D_WIZCHIP_=5100")
 add_definitions("-Os")
 
 if(DEFINED ENV{AVR_FIND_ROOT_PATH})
@@ -57,27 +56,25 @@ include_directories(${CMAKE_SYSTEM_INCLUDE_PATH} ${CMAKE_SYSTEM_LIBRARY_PATH})
 
 ###################### FreeRTOS ######################
 
-set(FreeRTOS9xx_include_dir "${CMAKE_CURRENT_SOURCE_DIR}/lib/freeRTOS9xx/include")
-file(GLOB_RECURSE FreeRTOS9xx_headers "${FreeRTOS9xx_include_dir}/*.h")
+include(./lib/freeRTOS9xx/freeRTOSFilePaths.cmake)
 
-set(FreeRTOS9xx_source_dir "${CMAKE_CURRENT_SOURCE_DIR}/lib/freeRTOS9xx")
-file(GLOB FreeRTOS9xx_root_sources "${FreeRTOS9xx_source_dir}/*.c")
-file(GLOB_RECURSE FreeRTOS9xx_libs
-        "${FreeRTOS9xx_source_dir}/lib*/*.c"
-        "${FreeRTOS9xx_source_dir}/portable/*.c"
-        "${FreeRTOS9xx_source_dir}/MemMang/heap_4.c")
-set(FreeRTOS9xx_sources ${FreeRTOS9xx_libs} ${FreeRTOS9xx_root_sources})
+add_avr_library(FreeRTOS STATIC ${FreeRTOS_SOURCES})
+target_include_directories(FreeRTOS PUBLIC ${FreeRTOS_INCLUDE_PUBLIC_DIRS})
 
-add_avr_library(FreeRTOS9xx STATIC ${FreeRTOS9xx_sources})
-target_include_directories(FreeRTOS9xx PUBLIC ${FreeRTOS9xx_include_dir})
+add_definitions("-D_WIZCHIP_=5100")
+
+###################### coreJSON ######################
+
+include(./lib/coreJSON/jsonFilePaths.cmake)
+
+add_avr_library(coreJSON STATIC ${JSON_SOURCES})
+target_include_directories(coreJSON PUBLIC ${JSON_INCLUDE_PUBLIC_DIRS})
 
 ###################### Kasa ######################
 
-file(GLOB kasa_sources "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c")
-file(GLOB kasa_headers "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h" )
-message(STATUS ${kasa_sources})
-message(STATUS ${kasa_headers})
+file(GLOB KASA_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c")
+file(GLOB KASA_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h" )
 
-add_avr_executable(kasa ${kasa_headers} ${kasa_sources})
+add_avr_executable(kasa ${KASA_HEADERS} ${KASA_SOURCES})
 target_include_directories(kasa.elf PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
-target_link_libraries(kasa.elf FreeRTOS9xx)
+target_link_libraries(kasa.elf FreeRTOS coreJSON)

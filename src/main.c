@@ -25,7 +25,7 @@ int main(void) {
     DDRL |= 0xFF; // PL0~PL7
 
     xSerialPort = xSerialPortInitMinimal(USART0, 115200, portSERIAL_BUFFER_TX, portSERIAL_BUFFER_RX);
-    xSerialPrint("Starting\r\n");
+    xSerialPrint((uint8_t*) "Starting\r\n");
 
     start_input_scanner();
     start_web_iface();
