@@ -3,12 +3,12 @@
 //
 #include <FreeRTOS.h>
 #include <task.h>
-#include <serial.h>
 #include <buttonDebounce.h>
 
 #include "local_io.h"
 #include "input_scanner.h"
 #include "output_manager.h"
+#include "common.h"
 
 TaskHandle_t input_scanner_handle = NULL;
 debouncer debouncerA;
@@ -24,13 +24,16 @@ void start_input_scanner(void) {
 }
 
 _Noreturn static void input_scanner_task(void *pvParameters) {
-    for(;;) {
+    for(ever) {
         uint16_t read = read_inputs();
 
         buttonProcess(&debouncerA, read);
         buttonProcess(&debouncerB, read >> 8u);
 
-        toggle_devices(buttonPressed(&debouncerA, 0xff) | (buttonPressed(&debouncerB, 0xff) << 8u));
+        uint16_t toggle_mask = buttonPressed(&debouncerA, 0xff) | (buttonPressed(&debouncerB, 0xff) << 8u);
+
+        if(toggle_mask)
+            toggle_devices(toggle_mask);
 
         vTaskDelay(5 / portTICK_PERIOD_MS);
     }

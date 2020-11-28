@@ -4,60 +4,36 @@
 
 #include "local_io.h"
 
-uint16_t outputs_state = 0;
-
 uint16_t read_inputs(void) {
-    return ~(PINA | (PINC << 8));
+    return ~(INPUT_REGISTER_LOW | (INPUT_REGISTER_HIGH << 8u));
 }
 
 bool read_input(uint8_t input) {
     if(input < 8)
-        return ~((PINA >> input) & 1u);
+        return ((~INPUT_REGISTER_LOW >> input) & 1u);
     else
-        return ~((PINC >> (input - 8u)) & 1u);
+        return ((~INPUT_REGISTER_HIGH >> (input - 8u)) & 1u);
 }
 
 void set_outputs(uint16_t outputs) {
-    outputs_state = outputs;
-    outputs = ~outputs;
-    PORTK = outputs & 0xFF;
-
-    if((outputs >> 8u) & 1u) PORTG |= _BV(PG2);
-    else PORTG &= ~_BV(PG2);
-
-    if((outputs >> 9u) & 1u) PORTD |= _BV(PD7);
-    else PORTD &= ~_BV(PD7);
-
-    if((outputs >> 10u) & 1u) PORTG |= _BV(PG0);
-    else PORTG &= ~_BV(PG0);
-
-    if((outputs >> 11u) & 1u) PORTG |= _BV(PG1);
-    else PORTG &= ~_BV(PG1);
-
-    if((outputs >> 12u) & 1u) PORTL |= _BV(PL6);
-    else PORTL &= ~_BV(PL6);
-
-    if((outputs >> 13u) & 1u) PORTL |= _BV(PL7);
-    else PORTL &= ~_BV(PL7);
-
-    if((outputs >> 14u) & 1u) PORTL |= _BV(PL4);
-    else PORTL &= ~_BV(PL4);
-
-    if((outputs >> 15u) & 1u) PORTL |= _BV(PL5);
-    else PORTL &= ~_BV(PL5);
+    OUTPUT_REGISTER_LOW = ~outputs; // RELAYS ARE ACTIVE LOW
+    OUTPUT_REGISTER_HIGH = ~outputs >> 8u;
 }
 
 void set_output(uint8_t output, bool state) {
     if(output < 8) {
-        if(state)
-            PORTK |= _BV(output);
+        if (state)
+            OUTPUT_REGISTER_LOW &= ~_BV(output); // RELAYS ARE ACTIVE LOW
         else
-            PORTK &= ~_BV(output);
-    } else {
-        // TODO: implement
+            OUTPUT_REGISTER_LOW |= _BV(output);
+    } else { // no need to check output < 16, shifting values > 7 will make everything stay the same
+        if (state)
+            OUTPUT_REGISTER_HIGH &= ~_BV(output - 8u); // RELAYS ARE ACTIVE LOW
+        else
+            OUTPUT_REGISTER_HIGH |= _BV(output - 8u);
     }
 }
 
 uint16_t get_outputs() {
-    return outputs_state;
-};
+    return ~(OUTPUT_REGISTER_LOW | (OUTPUT_REGISTER_HIGH << 8u));
+}

@@ -1,6 +1,10 @@
 //
 // Created by vivedo on 26/11/20.
 //
+// This file contains bad ways to do things.
+// Should they be made in a batter way? maybe.
+// Do i have the time to do so? no.
+//
 #include <FreeRTOS.h>
 #include <task.h>
 #include <stdbool.h>
@@ -18,9 +22,6 @@ void start_lamp0_stopper(bool long_timer);
 void stop_lamp0_stopper();
 uint8_t get_lamp0_stopper_status();
 void lamp0_stopper_timer_cb(TimerHandle_t handle);
-
-void start_output_manager(void) {
-}
 
 void toggle_devices(uint16_t toggle_mask) {
     uint16_t outputs = get_outputs();

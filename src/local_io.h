@@ -8,10 +8,10 @@
 #include <stdbool.h>
 #include <avr/io.h>
 
-#define PORTG_OUT_MASK 0b00000111
-#define PORTL_OUT_MASK 0b11110000
-#define PORTD_OUT_MASK 0b10000000
-#define PORTK_OUT_MASK 0b11111111
+#define OUTPUT_REGISTER_LOW  PORTK
+#define OUTPUT_REGISTER_HIGH PORTL
+#define INPUT_REGISTER_LOW   PINA
+#define INPUT_REGISTER_HIGH  PINC
 
 uint16_t read_inputs(void);
 bool read_input(uint8_t input);

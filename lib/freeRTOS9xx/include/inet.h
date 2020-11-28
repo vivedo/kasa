@@ -17,13 +17,13 @@
 
 /* SYSTEM DEFINES */
 
-#define HOST_NAME		"Goldilocks"		/**< Host Name */
+#define HOST_NAME		"Kasa"		/**< Host Name */
 
 #define GATEWAY_IP_ADDR		"192.168.1.254"		// Gateway IP Address (only needed if DHCP not utilised).
 #define SUBNET_IP_MASK		"255.255.255.0"		// Subnet Mask saved off chip (only needed if DHCP not utilised).
 #define SRC_IP_ADDR		"192.168.1.32"		// Local IP Address (only needed if DHCP not utilised).
 
-#define NTP_SERVER_4		"150.203.1.10"		// Australian National University NTP Server
+#define NTP_SERVER_4		"193.204.114.232"
 #define NTP_SERVER_3		"192.231.203.132"	// Internode NTP Server
 #define NTP_SERVER_2		"130.234.255.83"	// A random NTP Server
 #define NTP_SERVER_1		"192.168.1.1"		// My NTP Server
